@@ -63,7 +63,9 @@
 
 
     <div>
-      <q-table :rows="measurements" :columns="(columns as any)" row-key="id" />
+      <q-table :rows="measurements" :columns="(columns as any)" row-key="id">
+
+      </q-table>
     </div>
 
   </q-page>
