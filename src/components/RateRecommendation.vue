@@ -55,7 +55,7 @@
 
           <q-item-section>
             <q-item-label>in {{ rateRecommendation.next }} Stunden</q-item-label>
-            <q-item-label caption>{{ dayjs().add(rateRecommendation.next, 'hours').format('HH:SS') }}</q-item-label>
+            <q-item-label caption>{{ dayjs().add(rateRecommendation.next, 'hours').format('DD.MM.YYYY HH:mm') }}</q-item-label>
           </q-item-section>
         </q-item>
       </div>

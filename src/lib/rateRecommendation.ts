@@ -29,15 +29,13 @@ export function calculateRateRecommendation(currentRate: number, currentPTT: num
     rate: 0,
     bolus: 0,
     pause: 0,
-    next: 8
+    next: 6
   };
 
   if(currentRate == 0) {
     r.rate = conf.INITIAL_RATE * patientWeight;
     r.bolus = conf.INITIAL_BOLUS * patientWeight;
-  }
-
-  if(currentPTT < 48) {
+  } else if(currentPTT < 48) {
     r.rate = currentRate + 4 * patientWeight;
     r.bolus = conf.INITIAL_BOLUS * patientWeight;
     r.pause = 0;

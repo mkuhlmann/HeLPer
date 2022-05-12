@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md">
-
+    <div class="text-xl font-semibold mb-5">{{ patient.name }} ({{ patient.weight }} kg)</div>
 
     <rate-recommendation :rate-recommendation="recommendedRate" />
 
@@ -8,7 +8,7 @@
       <q-form class="q-mt-lg" @submit="onSubmit" @reset="onReset">
 
         <div class="flex flex-col md:flex-row q-gutter-md">
-          <q-input class="col" filled label="Laufrate (mL/h)" type="number" v-model.number="newMeasurement.rate" lazy-rules :rules="[
+          <q-input class="col" filled label="Laufrate (mL/h)" type="number" step="0.01" v-model.number="newMeasurement.rate" lazy-rules :rules="[
             val => val !== null && val !== '' || 'Bitte Laufrate eingeben',
             val => val > 0 && val < 100 || 'Bitte gültige Laufrate eingeben'
           ]" />
@@ -19,7 +19,7 @@
             val => val > 0 && val < 100 || 'Bitte gültige PTT eingeben'
           ]" />
 
-          <q-input class="col" filled label="Thrombozyten (optional)" type="number" v-model.number="newMeasurement.ptt" lazy-rules :rules="[
+          <q-input class="col" filled label="Thrombozyten (optional)" type="number" v-model.number="newMeasurement.thrombocytes" lazy-rules :rules="[
             val => val == 0 || val > 0 && val < 100 || 'Bitte gültige Thromozytenzahl eingeben'
           ]" />
 
@@ -90,8 +90,8 @@ const patient = patientStore.getPatient(route.params.id as string)!;
 const measurementStore = useMeasurementStore();
 const measurements = ref<Measurement[]>(measurementStore.getMeasurements(patient.id));
 
-const lastMeasurement = measurements.value[measurements.value.length - 1];
-const recommendedRate = ref(calculateRateRecommendation(lastMeasurement.rate, lastMeasurement.ptt, patient.weight));
+
+const recommendedRate = ref(calculateRateRecommendation(0, 0, patient.weight));
 
 const newMeasurement = ref<Measurement>({
   id: nanoid(),
@@ -137,6 +137,14 @@ const onReset = () => {
 const onSubmit = () => {
   measurementStore.addMeasurement(patient.id, newMeasurement.value);
   measurements.value = measurementStore.getMeasurements(patient.id);
+  recalculateRecommendation();
+};
+
+const recalculateRecommendation = () => {
+  if (measurements.value.length > 0) {
+    let lastMeasurement = measurements.value[measurements.value.length - 1];
+    recommendedRate.value = calculateRateRecommendation(lastMeasurement.rate, lastMeasurement.ptt, patient.weight);
+  }
 };
 
 
