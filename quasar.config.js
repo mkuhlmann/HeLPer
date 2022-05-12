@@ -11,7 +11,6 @@
 
 const { configure } = require('quasar/wrappers');
 
-
 module.exports = configure(function (/* ctx */) {
   return {
     eslint: {
@@ -75,11 +74,16 @@ module.exports = configure(function (/* ctx */) {
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
+      extendViteConf(config, invokeParams) {
+        config.define.__APP_VERSION__ = JSON.stringify(process.env.npm_package_version);
+      },
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
-
+      vitePlugins: [
+        ['vite-plugin-windicss']
+      ]
       // vitePlugins: [
       //   [ 'package-name', { ..options.. } ]
       // ]
@@ -88,7 +92,7 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true // opens browser window automatically
+      open: false // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

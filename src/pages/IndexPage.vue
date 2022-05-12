@@ -32,8 +32,14 @@ const columns: QTableColumn[] = [
   {
     name: 'age',
     field: 'age',
-    label: 'Age',
-    align: 'right'
+    label: 'Alter',
+    align: 'left'
+  },
+  {
+    name: 'weight',
+    field: 'weight',
+    label: 'Gewicht (kg)',
+    align: 'left'
   }
 
 ];

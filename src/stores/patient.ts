@@ -7,11 +7,12 @@ export const usePatientStore = defineStore('patient', () => {
 
   const patients = useStorage<Patient[]>('patients', []);
 
-  const addPatient = (name: string, age: number) => {
+  const addPatient = (name: string, age: number, weight: number) => {
     const patient: Patient = {
       id: nanoid(),
       name,
-      age
+      age,
+      weight
     };
     patients.value.push(patient);
   };
