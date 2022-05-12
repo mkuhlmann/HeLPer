@@ -11,10 +11,9 @@
 </template>
 
 <script lang="ts" setup>
-import ExampleComponent from 'components/ExampleComponent.vue';
 import { QTableColumn } from 'quasar';
 import { usePatientStore } from 'src/stores/patient';
-import { defineComponent, ref } from 'vue';
+import { Patient } from 'src/types';
 import { useRouter } from 'vue-router';
 import AddPatientForm from '../components/AddPatientForm.vue';
 
@@ -44,7 +43,7 @@ const columns: QTableColumn[] = [
 
 ];
 
-const onRowClick = (evt, row, index) => {
+const onRowClick = (event: Event, row: Patient) => {
   router.push(`/patient/${row.id}`);
 };
 

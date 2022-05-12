@@ -30,7 +30,6 @@
 
 <script lang="ts" setup>
 import { usePatientStore } from 'src/stores/patient';
-import { Patient } from 'src/types';
 import { ref } from 'vue';
 
 
