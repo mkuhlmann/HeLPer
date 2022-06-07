@@ -76,6 +76,7 @@ module.exports = configure(function (/* ctx */) {
       // distDir
       extendViteConf(config, invokeParams) {
         config.define.__APP_VERSION__ = JSON.stringify(process.env.npm_package_version);
+
       },
 
       // extendViteConf (viteConf) {},
@@ -92,6 +93,9 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
+      proxy: {
+        '/api': 'http://localhost:9001'
+      },
       open: false // opens browser window automatically
     },
 
@@ -201,7 +205,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'telemed'
+        appId: 'HeLPer'
       }
     },
 

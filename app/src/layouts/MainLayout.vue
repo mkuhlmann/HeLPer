@@ -6,7 +6,7 @@
         <q-btn flat dense round icon="home" aria-label="Home" to="/" />
 
         <q-toolbar-title>
-          Heparin-App
+          HeLPer
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -14,7 +14,7 @@
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list class="h-full">
         <q-item-label header>
-          Heparin-App
+          HeLPer
         </q-item-label>
 
         <EssentialLink title="Startseite" icon="home" link="/" caption="Patientenübersicht" :internal="true" />

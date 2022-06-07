@@ -41,8 +41,8 @@ const patient = ref({
   weight: 0
 });
 
-const onSubmit = () => {
-  patientStore.addPatient(patient.value.name, patient.value.age, patient.value.weight);
+const onSubmit = async() => {
+  await patientStore.addPatient(patient.value.name, patient.value.age, patient.value.weight);
 };
 
 const onReset = () => {

@@ -1,6 +1,5 @@
-# Heparin App (telemed)
+# HeLPer
 
-A Quasar Project
 
 ## Install the dependencies
 ```bash
