@@ -2,10 +2,7 @@
   <Suspense>
     <router-view />
     <template #fallback>
-<q-spinner
-        color="primary"
-        size="3em"
-      />
+      <q-spinner color="primary" size="3em" />
     </template>
   </Suspense>
 </template>
