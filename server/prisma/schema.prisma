@@ -22,7 +22,7 @@ model DoseSchema {
 
 model Measurement {
   id        Int   @id @default(autoincrement())
-  patientId String
+  patientId Int
   weight    Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

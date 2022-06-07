@@ -1,5 +1,13 @@
 <template>
-  <router-view />
+  <Suspense>
+    <router-view />
+    <template #fallback>
+<q-spinner
+        color="primary"
+        size="3em"
+      />
+    </template>
+  </Suspense>
 </template>
 
 <script lang="ts">

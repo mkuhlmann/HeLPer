@@ -1,14 +1,14 @@
 
 
 export type Patient = {
-  id: string;
+  id: number;
   name: string;
   age: number;
   weight: number;
 };
 
 export type Measurement = {
-  id: string;
+  id: number;
   ptt: number;
   rate: number;
   thrombocytes?: number;

@@ -22,6 +22,14 @@ app.get('/api/patients', async (request, reply) => {
 
 });
 
+app.get<{ Params: { id: number } }>('/api/patients/:id', async (request, reply) => {
+  return await prisma.patient.findFirst({
+    where: {
+      id: Number(request.params.id),
+    }
+  });
+});
+
 app.post<{ Body: Patient }>('/api/patients', async (request, reply) => {
   return prisma.patient.create({
     data: {
@@ -34,6 +42,15 @@ app.delete<{ Params: { id: number } }>('/api/patients/:id', async (request, repl
   return prisma.patient.delete({
     where: {
       id: Number(request.params.id)
+    }
+  });
+});
+
+
+app.get<{ Params: { id: number } }>('/api/patients/:id/measurements', async (request, reply) => {
+  return prisma.measurement.findMany({
+    where: {
+      patientId: Number(request.params.id)
     }
   });
 });

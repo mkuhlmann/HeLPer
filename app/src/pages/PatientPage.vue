@@ -87,16 +87,17 @@ import { calculateRateRecommendation } from 'src/lib/rateRecommendation';
 const route = useRoute();
 
 const patientStore = usePatientStore();
-const patient = patientStore.getPatient(route.params.id as string)!;
+const patient = await patientStore.getPatient(Number(route.params.id))!;
+
 
 const measurementStore = useMeasurementStore();
-const measurements = ref<Measurement[]>(measurementStore.getMeasurements(patient.id));
+const measurements = ref<Measurement[]>(await measurementStore.getMeasurements(patient.id));
 
 
 const recommendedRate = ref(calculateRateRecommendation(0, 0, patient.weight));
 
 const newMeasurement = ref<Measurement>({
-  id: nanoid(),
+  id: 0,
   rate: 0,
   ptt: 0,
   thrombocytes: 0,
@@ -128,7 +129,7 @@ const columns: QTableColumn[] = [
 
 const onReset = () => {
   newMeasurement.value = {
-    id: nanoid(),
+    id: 0,
     rate: 0,
     ptt: 0,
     thrombocytes: 0,
@@ -136,9 +137,9 @@ const onReset = () => {
   };
 };
 
-const onSubmit = () => {
-  measurementStore.addMeasurement(patient.id, newMeasurement.value);
-  measurements.value = measurementStore.getMeasurements(patient.id);
+const onSubmit = async () => {
+  await measurementStore.addMeasurement(patient.id, newMeasurement.value);
+  measurements.value = await measurementStore.getMeasurements(patient.id);
   recalculateRecommendation();
 };
 

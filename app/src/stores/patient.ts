@@ -20,8 +20,9 @@ export const usePatientStore = defineStore('patient', () => {
     patients.value.push(patient);
   };
 
-  const getPatient = (id: string) => {
-    return patients.value.find(patient => patient.id === id);
+  const getPatient = async (id: number) => {
+    const patient = await $fetch(`/api/patients/${id}`) as Patient;
+    return patient;
   };
 
   const removePatient = async(id: string) => {
