@@ -19,15 +19,15 @@
             val => val > 0 && val < 100 || 'Bitte gültige PTT eingeben'
           ]" />
 
-          <q-input class="col" filled label="Thrombozyten (optional)" type="number" v-model.number="newMeasurement.thrombocytes" lazy-rules :rules="[
+          <q-input class="col" filled label="Thrombozyten (/nl)" type="number" v-model.number="newMeasurement.thrombocytes" lazy-rules :rules="[
             val => val == 0 || val > 0 && val < 100 || 'Bitte gültige Thromozytenzahl eingeben'
           ]" />
 
-          <q-input filled v-model="newMeasurement.createdAt">
+          <q-input filled v-model="newMeasurement.recordedAt">
             <template v-slot:prepend>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="newMeasurement.createdAt" mask="YYYY-MM-DD HH:mm">
+                  <q-date v-model="newMeasurement.recordedAt" mask="YYYY-MM-DD HH:mm">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat />
                     </div>
@@ -39,7 +39,7 @@
             <template v-slot:append>
               <q-icon name="access_time" class="cursor-pointer">
                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-time v-model="newMeasurement.createdAt" mask="YYYY-MM-DD HH:mm" format24h>
+                  <q-time v-model="newMeasurement.recordedAt" mask="YYYY-MM-DD HH:mm" format24h>
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat />
                     </div>
@@ -96,13 +96,25 @@ const measurements = ref<Measurement[]>(await measurementStore.getMeasurements(p
 
 const recommendedRate = ref(calculateRateRecommendation(0, 0, patient.weight));
 
-const newMeasurement = ref<Measurement>({
-  id: 0,
-  rate: 0,
-  ptt: 0,
-  thrombocytes: 0,
-  createdAt: dayjs().format('YYYY-MM-DD HH:mm')
-});
+
+const newMeasurement = ref<Partial<Measurement>>({});
+const onReset = () => {
+  newMeasurement.value = {
+    rate: 0,
+    ptt: 0,
+    thrombocytes: 0,
+    recordedAt: dayjs().format('YYYY-MM-DD HH:mm')
+  };
+};
+
+
+onReset();
+
+if (measurements.value.length > 0) {
+  newMeasurement.value.ptt = measurements.value[measurements.value.length - 1].ptt;
+  newMeasurement.value.rate = measurements.value[measurements.value.length - 1].rate;
+  newMeasurement.value.thrombocytes = measurements.value[measurements.value.length - 1].thrombocytes;
+}
 
 const columns: QTableColumn[] = [
   {
@@ -120,22 +132,20 @@ const columns: QTableColumn[] = [
   },
 
   {
-    name: 'createdAt',
-    field: 'createdAt',
-    label: 'Datum',
+    name: 'thrombocytes',
+    field: 'thrombocytes',
+    label: 'Thrombozyten (/nl)',
     align: 'left'
+  },
+
+  {
+    name: 'recordedAt',
+    field: 'recordedAt',
+    label: 'Datum',
+    align: 'left',
+    format: (value: string) => dayjs(value).format('YYYY-MM-DD HH:mm')
   }
 ];
-
-const onReset = () => {
-  newMeasurement.value = {
-    id: 0,
-    rate: 0,
-    ptt: 0,
-    thrombocytes: 0,
-    createdAt: dayjs().format('YYYY-MM-DD HH:mm')
-  };
-};
 
 const onSubmit = async () => {
   await measurementStore.addMeasurement(patient.id, newMeasurement.value);
@@ -149,7 +159,5 @@ const recalculateRecommendation = () => {
     recommendedRate.value = calculateRateRecommendation(lastMeasurement.rate, lastMeasurement.ptt, patient.weight);
   }
 };
-
-
-
+recalculateRecommendation();
 </script>

@@ -12,7 +12,7 @@ export type Measurement = {
   ptt: number;
   rate: number;
   thrombocytes?: number;
-  createdAt: string;
+  recordedAt: string;
 };
 
 

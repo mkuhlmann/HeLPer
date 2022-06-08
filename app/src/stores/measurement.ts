@@ -11,8 +11,8 @@ export const useMeasurementStore = defineStore('measurement', () => {
     return measurements;
   };
 
-  const addMeasurement = async (patientId: number, measurement: Measurement) => {
-    const _measurement = await $fetch(`/api/measurements`, {
+  const addMeasurement = async (patientId: number, measurement: Partial<Measurement>) => {
+    const _measurement = await $fetch(`/api/patients/${patientId}/measurements`, {
       method: 'POST',
       body: {
         ...measurement,

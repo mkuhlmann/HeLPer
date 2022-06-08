@@ -1,10 +1,10 @@
 import fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
-import { PrismaClient, Patient } from '@prisma/client';
+import fastifyAutoload from '@fastify/autoload';
+
 import path from 'path';
 
 const app = fastify();
-const prisma = new PrismaClient();
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -17,42 +17,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.get('/api/patients', async (request, reply) => {
-  return prisma.patient.findMany();
-
-});
-
-app.get<{ Params: { id: number } }>('/api/patients/:id', async (request, reply) => {
-  return await prisma.patient.findFirst({
-    where: {
-      id: Number(request.params.id),
-    }
-  });
-});
-
-app.post<{ Body: Patient }>('/api/patients', async (request, reply) => {
-  return prisma.patient.create({
-    data: {
-      ...request.body
-    }
-  });
-});
-
-app.delete<{ Params: { id: number } }>('/api/patients/:id', async (request, reply) => {
-  return prisma.patient.delete({
-    where: {
-      id: Number(request.params.id)
-    }
-  });
-});
-
-
-app.get<{ Params: { id: number } }>('/api/patients/:id/measurements', async (request, reply) => {
-  return prisma.measurement.findMany({
-    where: {
-      patientId: Number(request.params.id)
-    }
-  });
+app.register(fastifyAutoload, {
+  dir: path.join(__dirname, 'routes'),
+  dirNameRoutePrefix: false
 });
 
 

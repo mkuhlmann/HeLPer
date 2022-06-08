@@ -8,6 +8,10 @@
         <q-toolbar-title>
           HeLPer
         </q-toolbar-title>
+
+        <div class="mr-2">Willkommen, {{ userStore.user }}</div>
+
+        <q-btn @click="logout()" flat dense round icon="logout" />
       </q-toolbar>
     </q-header>
 
@@ -34,25 +38,22 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
+import { useUserStore } from 'src/stores/user';
+import { useRouter } from 'vue-router';
 
 const linksList = [
+  {
+    title: 'Laufraten',
+    caption: 'github.com/quasarframework',
+    icon: 'code',
+    link: '/rates',
+    internal: true
+  },
   {
     title: 'Dokumentation',
     caption: 'quasar.dev',
     icon: 'school',
     link: 'https://quasar.dev'
-  },
-  {
-    title: 'Fehler melden',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Lizenzinformationen',
-    caption: 'Version ' + __APP_VERSION__,
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
   }
 ];
 
@@ -64,14 +65,26 @@ export default defineComponent({
   },
 
   setup() {
-    const leftDrawerOpen = ref(false)
+    const leftDrawerOpen = ref(false);
+    const userStore = useUserStore();
+    const router = useRouter();
+
+    if (!userStore.isLoggedIn()) {
+      router.push('/login');
+    }
+
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      logout() {
+        userStore.logout();
+        router.push('/login');
+      },
+      userStore
     }
   }
 });

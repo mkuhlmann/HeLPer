@@ -21,9 +21,12 @@ model DoseSchema {
 }
 
 model Measurement {
-  id        Int   @id @default(autoincrement())
-  patientId Int
-  weight    Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  patientId    Int
+  rate         Float?
+  ptt          Float?
+  thrombocytes Float?
+  recordedAt   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
