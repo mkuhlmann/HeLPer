@@ -8,7 +8,7 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
 
   fastify.post<{ Params: { id: number }, Body: Rate }>('/api/patients/:id/rates', async (request, reply) => {
 
-    request.body.recordedAt = dayjs(request.body.recordedAt, 'YYYY-MM-DD HH:mm:ss').toDate();
+    //request.body.recordedAt = dayjs(request.body.recordedAt, 'YYYY-MM-DD HH:mm:ss').toDate();
 
     return await prisma.rate.create({
       data: {
@@ -25,7 +25,6 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
         patientId: Number(request.params.id)
       },
       orderBy: [
-        { recordedAt: 'asc' },
         { id: 'asc' }
       ]
     });
