@@ -6,6 +6,9 @@ export const useUserStore = defineStore('user', () => {
   const user = useStorage<string>('user', null);
 
   const login = async (username: string, password?: string) => {
+    if (username != 'arzt' && username != 'pflege') {
+      return false;
+    }
     user.value = username;
     return true;
   }
@@ -17,6 +20,14 @@ export const useUserStore = defineStore('user', () => {
   const isLoggedIn = () => {
     return user.value !== null;
   }
+
+  const isPhysician = () => {
+    return user.value === 'arzt';
+  };
+
+  const isNurse = () => {
+    return user.value === 'pflege';
+  };
 
   return {
     login,

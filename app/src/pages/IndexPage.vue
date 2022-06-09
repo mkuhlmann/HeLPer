@@ -1,12 +1,19 @@
 <template>
   <q-page class="q-pa-md">
     <div>
-      <q-table title="Patienten" :rows="patientStore.patients" :columns="(columns as any)" v-on:row-click="onRowClick" row-key="id">
+      <q-table title="Patienten" :rows="patientStore.patients" :columns="(columns as any)" v-on:row-click="onRowClick" :filter="filter" row-key="id">
         <template v-slot:body-cell-actions="props">
           <q-td>
             <q-btn round flat color="grey" @click="viewPatient(props.row)" icon="visibility"></q-btn>
             <q-btn round flat color="grey" @click="deletePatient(props.row)" icon="delete"></q-btn>
           </q-td>
+        </template>
+        <template v-slot:top-right>
+          <q-input borderless dense debounce="300" v-model="filter" placeholder="Suche">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </template>
       </q-table>
     </div>
@@ -44,10 +51,18 @@ const router = useRouter();
 
 const columns: QTableColumn[] = [
   {
+    name: 'id',
+    field: 'id',
+    label: 'ID',
+    align: 'left'
+
+  },
+  {
     name: 'name',
     field: 'name',
     label: 'Name',
-    align: 'left'
+    align: 'left',
+    sortable: true
 
   },
   {
@@ -71,6 +86,8 @@ const columns: QTableColumn[] = [
   }
 
 ];
+
+const filter = ref('');
 
 const deleteConfirm = ref(false);
 const deletePatientModel = ref<Patient>();

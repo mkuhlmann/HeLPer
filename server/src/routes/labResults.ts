@@ -1,25 +1,26 @@
 
 import { FastifyPluginCallback } from 'fastify';
-import { Measurement } from '@prisma/client';
+import { LabResult } from '@prisma/client';
 import { prisma } from '../db';
 import dayjs from 'dayjs';
 
 const plugin: FastifyPluginCallback = async (fastify, options, next) => {
 
-  fastify.post<{ Params: { id: number }, Body: Measurement }>('/api/patients/:id/measurements', async (request, reply) => {
+  fastify.post<{ Params: { id: number }, Body: LabResult }>('/api/patients/:id/lab-results', async (request, reply) => {
 
     request.body.recordedAt = dayjs(request.body.recordedAt, 'YYYY-MM-DD HH:mm:ss').toDate();
-    console.log(request.body);
-    return await prisma.measurement.create({
+
+    return await prisma.labResult.create({
       data: {
         ...request.body,
         patientId: Number(request.params.id)
       }
     });
+
   });
 
-  fastify.get<{ Params: { id: number } }>('/api/patients/:id/measurements', async (request, reply) => {
-    return prisma.measurement.findMany({
+  fastify.get<{ Params: { id: number } }>('/api/patients/:id/lab-results', async (request, reply) => {
+    return prisma.labResult.findMany({
       where: {
         patientId: Number(request.params.id)
       },
@@ -29,6 +30,15 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
       ]
     });
   });
+
+  fastify.delete<{ Params: { id: number } }>('/api/lab-results/:id', async (request, reply) => {
+    return prisma.labResult.delete({
+      where: {
+        id: Number(request.params.id)
+      }
+    });
+  });
+
 };
 
 export default plugin;

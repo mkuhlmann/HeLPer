@@ -18,15 +18,33 @@ model Patient {
 
 model DoseSchema {
   id Int @id @default(autoincrement())
+
 }
 
-model Measurement {
+model Rate {
+  id        Int   @id @default(autoincrement())
+  patientId Int
+  rate      Float
+
+  recordedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model LabResult {
   id           Int      @id @default(autoincrement())
   patientId    Int
-  rate         Float?
   ptt          Float?
   thrombocytes Float?
   recordedAt   DateTime @default(now())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model AuditTrail {
+  id        Int      @id @default(autoincrement())
+  model     String
+  action    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

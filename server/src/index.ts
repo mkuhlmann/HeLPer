@@ -4,7 +4,8 @@ import fastifyAutoload from '@fastify/autoload';
 
 import path from 'path';
 
-const app = fastify();
+const app = fastify({
+});
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -23,10 +24,10 @@ app.register(fastifyAutoload, {
 });
 
 
-app.listen(9001, (err) => {
+app.listen(9001, '0.0.0.0', (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)
   }
-  console.log(`🚀 Server ready at: http://localhost:9001`);
+  console.log(`🚀 Server ready at: ${address}`);
 });
