@@ -1,5 +1,5 @@
-import { useStorage } from "@vueuse/core";
-import { defineStore } from "pinia";
+import { useStorage } from '@vueuse/core';
+import { defineStore } from 'pinia';
 
 
 export const useUserStore = defineStore('user', () => {

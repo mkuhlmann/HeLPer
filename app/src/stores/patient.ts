@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 import { Patient } from 'src/types';
-import { $fetch } from 'ohmyfetch';
 import { ref } from 'vue';
+import { apiFetch } from 'src/lib/apiFetch';
 
 export const usePatientStore = defineStore('patient', () => {
 
   const patients = ref<Patient[]>([]);
 
   const addPatient = async (name: string, age: number, weight: number) => {
-    const patient = await $fetch('/api/patients', {
+    const patient = await apiFetch('/api/patients', {
       method: 'POST',
       body: {
         name,
@@ -21,19 +21,19 @@ export const usePatientStore = defineStore('patient', () => {
   };
 
   const getPatient = async (id: number) => {
-    const patient = await $fetch(`/api/patients/${id}`) as Patient;
+    const patient = await apiFetch(`/api/patients/${id}`) as Patient;
     return patient;
   };
 
-  const removePatient = async(id: string) => {
-    await $fetch(`/api/patients/${id}`, {
+  const removePatient = async (id: string) => {
+    await apiFetch(`/api/patients/${id}`, {
       method: 'DELETE'
     });
     await refreshPatients();
   };
 
   const refreshPatients = async () => {
-    patients.value = await $fetch('/api/patients');
+    patients.value = await apiFetch('/api/patients');
   };
   refreshPatients().then();
 

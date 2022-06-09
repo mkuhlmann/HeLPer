@@ -41,10 +41,14 @@ model LabResult {
   updatedAt    DateTime @updatedAt
 }
 
-model AuditTrail {
-  id        Int      @id @default(autoincrement())
-  model     String
-  action    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  user        String
+  ip          String
+  event       String
+  model       String?
+  modelAction String?
+  modelId     Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
