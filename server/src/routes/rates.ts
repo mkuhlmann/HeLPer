@@ -31,6 +31,9 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
   });
 
   fastify.delete<{ Params: { id: number } }>('/api/rates/:id', async (request, reply) => {
+
+    auditLogModel(request, 'Rate', request.params.id);
+
     return prisma.rate.delete({
       where: {
         id: Number(request.params.id)

@@ -11,7 +11,7 @@ if (userStore.isLoggedIn()) {
 }
 
 const user = ref({
-  username: 'demo',
+  username: 'arzt',
   password: 'demo'
 });
 const error = ref(false);
@@ -32,7 +32,7 @@ const login = async () => {
         <h1 class="text-lg mb-5 font-bold">HeLPer Login</h1>
         <q-banner class="bg-primary text-white mb-10">
           Diese PoC-App behinhaltet keinen Authentifizierung-Mechanismus, dieses Formular dient der Demonstration.
-          <br /><br />Login mit Nutzer arzt oder pflege und beliebigem Passwort.
+          <br /><br />Login mit Nutzer arzt/pflege/admin und beliebigem Passwort.
         </q-banner>
         <q-form class="q-gutter-md">
           <q-input square filled clearable v-model="user.username" type="text" tabindex="1" label="Nutzername" />

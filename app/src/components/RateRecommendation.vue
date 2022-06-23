@@ -16,7 +16,7 @@
 
           <q-item-section v-if="rateRecommendation.rate > 0">
             <q-item-label class="text-red">{{ Math.round(unitToVolume(rateRecommendation.rate) * 100) / 100 }} mL/h</q-item-label>
-            <q-item-label caption>{{ Math.round(unitToVolume(rateRecommendation.rate) * 100) / 100 }} mL/h ≙ {{ rateRecommendation.rate }} IE/h</q-item-label>
+            <q-item-label caption>≙ {{ rateRecommendation.rate }} IE/h</q-item-label>
           </q-item-section>
 
           <q-item-section v-else>

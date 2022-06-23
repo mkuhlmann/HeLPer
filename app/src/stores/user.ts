@@ -2,11 +2,17 @@ import { useStorage } from '@vueuse/core';
 import { defineStore } from 'pinia';
 
 
+export enum UserRole {
+  admin = 'admin',
+  physician = 'arzt',
+  nurse = 'pflege'
+};
+
 export const useUserStore = defineStore('user', () => {
   const user = useStorage<string>('user', null);
 
   const login = async (username: string, password?: string) => {
-    if (username != 'arzt' && username != 'pflege') {
+    if (username != 'arzt' && username != 'pflege' && username != 'admin') {
       return false;
     }
     user.value = username;
@@ -21,18 +27,15 @@ export const useUserStore = defineStore('user', () => {
     return user.value !== null;
   }
 
-  const isPhysician = () => {
-    return user.value === 'arzt';
-  };
-
-  const isNurse = () => {
-    return user.value === 'pflege';
-  };
+  const isRole = (role: UserRole) => {
+    return user.value === role;
+  }
 
   return {
     login,
     logout,
     isLoggedIn,
+    isRole,
     user
   }
 });

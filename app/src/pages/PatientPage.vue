@@ -17,7 +17,7 @@
       <div class="flex-auto">
         <h2 class="text-xl font-semibold mb-5">Laufraten</h2>
 
-        <q-form class="q-mt-lg" @submit="addRate" ref="rateForm">
+        <q-form class="q-mt-lg" @submit="addRate" ref="rateForm" v-if="user.isRole(UserRole.physician)">
 
           <div class="flex flex-col md:flex-row q-gutter-md">
             <q-input class="col" filled label="Laufrate (mL/h)" type="number" step="0.01" v-model.number="newRate.rate" lazy-rules :rules="[
@@ -113,11 +113,13 @@ import { LabResult, Rate } from '@prisma/client';
 import RateRecommendation from 'src/components/RateRecommendation.vue';
 import { calculateRateRecommendation, unitToVolume } from 'src/lib/rateRecommendation';
 import { apiFetch } from 'src/lib/apiFetch';
+import { useUserStore, UserRole } from 'src/stores/user';
 
 const route = useRoute();
 
 const patientStore = usePatientStore();
 const patient = await patientStore.getPatient(Number(route.params.id));
+const user = useUserStore();
 
 
 const rates = ref([] as Rate[]);
