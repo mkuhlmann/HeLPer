@@ -38,12 +38,12 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
-import { useUserStore } from 'src/stores/user';
+import { UserRole, useUserStore } from 'src/stores/user';
 import { useRouter } from 'vue-router';
 
 const linksList = [
   {
-    title: 'Laufraten',
+    title: 'Audit Log',
     caption: 'github.com/quasarframework',
     icon: 'code',
     link: '/rates',
@@ -56,6 +56,18 @@ const linksList = [
     link: 'https://quasar.dev'
   }
 ];
+
+const user = useUserStore();
+
+if (user.isRole(UserRole.admin)) {
+  linksList.push({
+    title: 'Audit Log',
+    caption: '',
+    icon: 'code',
+    link: '/audit',
+    internal: true
+  });
+}
 
 export default defineComponent({
   name: 'MainLayout',
