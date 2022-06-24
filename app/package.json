@@ -15,11 +15,14 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@vueuse/core": "^8.4.2",
+    "chart.js": "^3.8.0",
+    "chartjs-adapter-dayjs-3": "^1.2.3",
     "dayjs": "^1.11.2",
     "nanoid": "^3.3.4",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
+    "vue-chartjs": "^4.1.1",
     "vue-router": "^4.0.0"
   },
   "devDependencies": {

@@ -43,17 +43,11 @@ import { useRouter } from 'vue-router';
 
 const linksList = [
   {
-    title: 'Audit Log',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: '/rates',
-    internal: true
-  },
-  {
     title: 'Dokumentation',
     caption: 'quasar.dev',
     icon: 'school',
-    link: 'https://quasar.dev'
+    link: 'https://quasar.dev',
+    internal: false
   }
 ];
 
@@ -61,8 +55,8 @@ const user = useUserStore();
 
 if (user.isRole(UserRole.admin)) {
   linksList.push({
-    title: 'Audit Log',
-    caption: '',
+    title: 'Audit Trail',
+    caption: 'Letzte Änderungen anzeigen',
     icon: 'code',
     link: '/audit',
     internal: true

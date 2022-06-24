@@ -3,19 +3,11 @@
     <div class="text-xl font-semibold mb-5">{{ patient.name }} ({{ patient.weight }} kg)</div>
 
     <div class="flex gap-5 mb-5">
-      <div class="flex-auto">
+      <div class="flex-1">
 
         <rate-recommendation :rate-recommendation="recommendation" />
-      </div>
-      <div class="flex-auto">
-        Graph
-      </div>
-    </div>
 
-
-    <div class="flex gap-5">
-      <div class="flex-auto">
-        <h2 class="text-xl font-semibold mb-5">Laufraten</h2>
+        <h2 class="text-xl font-semibold my-5">Laufraten</h2>
 
         <q-form class="q-mt-lg" @submit="addRate" ref="rateForm" v-if="user.isRole(UserRole.physician)">
 
@@ -40,9 +32,10 @@
           </template>
         </q-table>
       </div>
+      <div class="flex-1">
+        <LineChart :chartData="chartData"></LineChart>
 
-      <div class="flex-auto">
-        <h2 class="text-xl font-semibold mb-5">Laborwerte</h2>
+        <h2 class="text-xl font-semibold my-5">Laborwerte</h2>
 
 
         <q-form class="q-mt-lg" @submit="addLabResult" ref="labForm">
@@ -114,6 +107,9 @@ import RateRecommendation from 'src/components/RateRecommendation.vue';
 import { calculateRateRecommendation, unitToVolume } from 'src/lib/rateRecommendation';
 import { apiFetch } from 'src/lib/apiFetch';
 import { useUserStore, UserRole } from 'src/stores/user';
+import LineChart from 'src/components/LineChart.vue';
+import { analyzeMetafile } from 'esbuild';
+import { ChartData, ScatterDataPoint } from 'chart.js';
 
 const route = useRoute();
 
@@ -125,9 +121,32 @@ const user = useUserStore();
 const rates = ref([] as Rate[]);
 const labResults = ref([] as LabResult[]);
 
+const chartData = ref<ChartData<'line', (number | ScatterDataPoint | null)[], unknown>>({ datasets: [] });
+
 const refreshData = async () => {
   rates.value = await apiFetch(`/api/patients/${patient.id}/rates`);
   labResults.value = await apiFetch(`/api/patients/${patient.id}/lab-results`);
+
+  chartData.value.datasets = [];
+
+  let chartRates = rates.value.map(rate => {
+    return {
+      x: rate.createdAt as unknown as number,
+      y: rate.rate
+    }
+  });
+
+  chartData.value.datasets[0] = { label: 'Laufrate mL/h', type: 'line', data: chartRates, borderColor: 'rgb(94, 234, 212)' };
+
+
+  let chartPtt = labResults.value.map(lab => {
+    return {
+      x: lab.createdAt as unknown as number,
+      y: lab.ptt as number
+    }
+  });
+
+  chartData.value.datasets[1] = { label: 'PTT (s)', type: 'line', data: chartPtt, borderColor: 'rgb(221, 68, 51)' };
 };
 await refreshData();
 
