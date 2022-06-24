@@ -37,7 +37,7 @@
             ]" />
 
             <q-input class="col" filled label="Bolus (IE)" type="number" step="0.01" v-model.number="newRate.bolus" lazy-rules :rules="[
-              val => !val || val > 1000 && val < 10000 || 'Bitte gültigen Bolus eingeben'
+              val => val === 0 || val > 1000 && val < 10000 || 'Bitte gültigen Bolus eingeben'
             ]" />
 
           </div>
@@ -208,10 +208,7 @@ const deleteLabResult = async (labResult: LabResult) => {
 
 const recommendation = ref(calculateRateRecommendation(0, 0, patient.weight));
 const recalculateRecommendation = () => {
-  /*const latestPTT = labResults.value[labResults.value.length - 1]?.ptt;
-  const latestRate = rates.value[rates.value.length - 1]?.rate;*/
-
-  const latestPTT = labResults.value[0]?.ptt;
+  const latestPTT = labResults.value.find(e => e.ptt != null)?.ptt;
   const latestRate = rates.value[0]?.rate;
 
   if (latestPTT && latestRate) {
@@ -222,7 +219,7 @@ recalculateRecommendation();
 
 const newRate = ref({
   rate: Math.round(unitToVolume(recommendation.value.rate) * 100) / 100,
-  bolus: recommendation.value.bolus === 0 ? null : recommendation.value.bolus,
+  bolus: recommendation.value.bolus,
 });
 
 const rateForm = ref<QForm>();
@@ -235,7 +232,7 @@ const addRate = async () => {
   await refreshData();
   newRate.value = {
     rate: 0,
-    bolus: null
+    bolus: 0
   };
   rateForm.value?.reset();
 

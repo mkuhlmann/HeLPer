@@ -88,7 +88,7 @@ const props = defineProps<{
 }>();
 
 const latestPTT = computed(() => {
-  return props.labResults[0] || null;
+  return props.labResults.find(e => e.ptt != null);
 });
 
 const latestRate = computed(() => {
