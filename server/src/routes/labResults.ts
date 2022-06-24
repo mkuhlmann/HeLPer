@@ -25,7 +25,7 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
         patientId: Number(request.params.id)
       },
       orderBy: [
-        { recordedAt: 'asc' },
+        { recordedAt: 'desc' },
         { id: 'asc' }
       ]
     });

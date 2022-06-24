@@ -17,6 +17,8 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
       }
     });
     auditLogModel(request, 'Rate', rate.id);
+
+    return rate;
   });
 
   fastify.get<{ Params: { id: number } }>('/api/patients/:id/rates', async (request, reply) => {
@@ -25,7 +27,7 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
         patientId: Number(request.params.id)
       },
       orderBy: [
-        { id: 'asc' }
+        { id: 'desc' }
       ]
     });
   });

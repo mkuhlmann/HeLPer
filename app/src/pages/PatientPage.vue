@@ -1,20 +1,43 @@
 <template>
+
+  <q-dialog v-model="confirmRate" persistent>
+    <q-card>
+      <q-card-section class="row items-center">
+        <q-avatar icon="warning" color="primary" text-color="white" />
+        <div class="q-ml-lg">
+          <div class="text-lg">Bitte neue Rate überprüfen und bestätigen.</div>
+          <div class>Neue Rate: {{ newRate.rate }} ml/h = {{ volumeToUnit(newRate.rate) }} IE/h</div>
+          <div v-if="newRate.bolus">Bolus: {{ newRate.bolus }} IE</div>
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Abbrechen" color="primary" v-close-popup />
+        <q-btn label="Bestätigen" @click="addRate" color="green" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
   <q-page class="q-pa-md">
-    <div class="text-xl font-semibold mb-5">{{ patient.name }} ({{ patient.weight }} kg)</div>
+    <div class="text-xl font-semibold mb-5">{{ patient.name }} ({{ patient.age }} J. / {{ patient.weight }} kg)</div>
 
     <div class="flex gap-5 mb-5">
       <div class="flex-1">
 
-        <rate-recommendation :rate-recommendation="recommendation" />
+        <rate-recommendation :rate-recommendation="recommendation" :labResults="labResults" :rates="rates" />
 
         <h2 class="text-xl font-semibold my-5">Laufraten</h2>
 
-        <q-form class="q-mt-lg" @submit="addRate" ref="rateForm" v-if="user.isRole(UserRole.physician)">
+        <q-form class="q-mt-lg" @submit="confirmRate = true" ref="rateForm" v-if="user.isRole(UserRole.physician)">
 
           <div class="flex flex-col md:flex-row q-gutter-md">
             <q-input class="col" filled label="Laufrate (mL/h)" type="number" step="0.01" v-model.number="newRate.rate" lazy-rules :rules="[
               val => val !== null && val !== '' || 'Bitte Laufrate eingeben',
               val => val > 0 && val < 100 || 'Bitte gültige Laufrate eingeben'
+            ]" />
+
+            <q-input class="col" filled label="Bolus (IE)" type="number" step="0.01" v-model.number="newRate.bolus" lazy-rules :rules="[
+              val => !val || val > 1000 && val < 10000 || 'Bitte gültigen Bolus eingeben'
             ]" />
 
           </div>
@@ -85,7 +108,7 @@
         <q-table :rows="labResults" :columns="(labColumns as any)" row-key="id">
           <template v-slot:body-cell-actions="props">
             <q-td>
-              <q-btn round flat color="grey" @click="deleteLabResult(props.row)" icon="delete"></q-btn>
+              <q-btn round flat size="sm" color="grey" @click="deleteLabResult(props.row)" icon="delete"></q-btn>
             </q-td>
           </template>
         </q-table>
@@ -104,12 +127,13 @@ import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import { LabResult, Rate } from '@prisma/client';
 import RateRecommendation from 'src/components/RateRecommendation.vue';
-import { calculateRateRecommendation, unitToVolume } from 'src/lib/rateRecommendation';
+import { calculateRateRecommendation, unitToVolume, volumeToUnit } from 'src/lib/rateRecommendation';
 import { apiFetch } from 'src/lib/apiFetch';
 import { useUserStore, UserRole } from 'src/stores/user';
 import LineChart from 'src/components/LineChart.vue';
 import { analyzeMetafile } from 'esbuild';
 import { ChartData, ScatterDataPoint } from 'chart.js';
+import { computed } from '@vue/reactivity';
 
 const route = useRoute();
 
@@ -122,6 +146,7 @@ const rates = ref([] as Rate[]);
 const labResults = ref([] as LabResult[]);
 
 const chartData = ref<ChartData<'line', (number | ScatterDataPoint | null)[], unknown>>({ datasets: [] });
+const confirmRate = ref(false);
 
 const refreshData = async () => {
   rates.value = await apiFetch(`/api/patients/${patient.id}/rates`);
@@ -183,8 +208,11 @@ const deleteLabResult = async (labResult: LabResult) => {
 
 const recommendation = ref(calculateRateRecommendation(0, 0, patient.weight));
 const recalculateRecommendation = () => {
-  const latestPTT = labResults.value[labResults.value.length - 1]?.ptt;
-  const latestRate = rates.value[rates.value.length - 1]?.rate;
+  /*const latestPTT = labResults.value[labResults.value.length - 1]?.ptt;
+  const latestRate = rates.value[rates.value.length - 1]?.rate;*/
+
+  const latestPTT = labResults.value[0]?.ptt;
+  const latestRate = rates.value[0]?.rate;
 
   if (latestPTT && latestRate) {
     recommendation.value = calculateRateRecommendation(latestRate, latestPTT, patient.weight);
@@ -193,7 +221,8 @@ const recalculateRecommendation = () => {
 recalculateRecommendation();
 
 const newRate = ref({
-  rate: Math.round(unitToVolume(recommendation.value.rate) * 100) / 100
+  rate: Math.round(unitToVolume(recommendation.value.rate) * 100) / 100,
+  bolus: recommendation.value.bolus === 0 ? null : recommendation.value.bolus,
 });
 
 const rateForm = ref<QForm>();
@@ -202,11 +231,15 @@ const addRate = async () => {
     method: 'POST',
     body: newRate.value
   });
+
   await refreshData();
   newRate.value = {
-    rate: 0
+    rate: 0,
+    bolus: null
   };
   rateForm.value?.reset();
+
+  recalculateRecommendation();
 };
 
 const deleteRate = async (rate: Rate) => {
@@ -226,19 +259,26 @@ const rateColumns: QTableColumn[] = [
   },
 
   {
-    name: 'recordedAt',
-    field: 'recordedAt',
+    name: 'bolus',
+    field: 'bolus',
+    label: 'Bolus (IE)',
+    align: 'left'
+  },
+
+  {
+    name: 'createdAt',
+    field: 'createdAt',
     label: 'Datum',
     align: 'left',
     format: (value: string) => dayjs(value).format('YYYY-MM-DD HH:mm')
   },
-
-  {
-    name: 'actions',
-    label: 'Aktionen',
-    align: 'left',
-    field: ''
-  }
+  /*
+    {
+      name: 'actions',
+      label: 'Aktionen',
+      align: 'left',
+      field: ''
+    }*/
 ];
 
 const labColumns: QTableColumn[] = [
