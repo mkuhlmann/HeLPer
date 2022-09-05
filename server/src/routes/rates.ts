@@ -10,6 +10,12 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
 
   fastify.post<{ Params: { id: number }, Body: Rate }>('/api/patients/:id/rates', { preHandler: [authHook] }, async (request, reply) => {
 
+    const user = request.headers['x-user'] as string;
+
+    if (user != 'arzt') {
+      reply.status(401).send({ 'eror': 'Unauthorized' });
+    }
+
     const rate = await prisma.rate.create({
       data: {
         ...request.body,

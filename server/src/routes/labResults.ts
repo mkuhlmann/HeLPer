@@ -40,7 +40,7 @@ const plugin: FastifyPluginCallback = async (fastify, options, next) => {
   fastify.delete<{ Params: { id: number } }>('/api/lab-results/:id', { preHandler: [authHook] }, async (request, reply) => {
     auditLogModel(request, 'LabResult', Number(request.params.id));
 
-    return prisma.labResult.delete({
+    return await prisma.labResult.delete({
       where: {
         id: Number(request.params.id)
       }
