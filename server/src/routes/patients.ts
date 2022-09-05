@@ -2,7 +2,7 @@
 import { FastifyPluginCallback } from 'fastify';
 import { Patient } from '@prisma/client';
 import { prisma } from '../db';
-import { authHook } from '../../authHook';
+import { authHook } from '../authHook';
 import { auditLogModel } from '../audit';
 
 const plugin: FastifyPluginCallback = async (fastify, options, next) => {

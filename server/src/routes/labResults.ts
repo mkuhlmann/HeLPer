@@ -4,7 +4,7 @@ import { LabResult } from '@prisma/client';
 import { prisma } from '../db';
 import dayjs from 'dayjs';
 import { auditLogModel } from '../audit';
-import { authHook } from '../../authHook';
+import { authHook } from '../authHook';
 
 const plugin: FastifyPluginCallback = async (fastify, options, next) => {
 
