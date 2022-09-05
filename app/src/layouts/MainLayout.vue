@@ -44,9 +44,16 @@ import { useRouter } from 'vue-router';
 const linksList = [
   {
     title: 'Dokumentation',
-    caption: 'quasar.dev',
+    caption: 'HeLPer Bedienungsanleitung',
     icon: 'school',
-    link: 'https://quasar.dev',
+    link: 'https://raw.githubusercontent.com/mkuhlmann/HeLPer/docs/HeLPer_Gebrauchsanweisung.pdf',
+    internal: false
+  },
+  {
+    title: 'Support',
+    caption: 'Probleme melden',
+    icon: 'report',
+    link: 'https://github.com/mkuhlmann/HeLPer/issues',
     internal: false
   }
 ];

@@ -5,7 +5,7 @@ const userStore = useUserStore();
 
 export const apiFetch = $fetch.create({
   headers: {
-    'Authorization': `Bearer ${userStore.user}`,
+    'Authorization': `Bearer ${userStore.jwt}`,
     'X-User': userStore.user,
   }
 });

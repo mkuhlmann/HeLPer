@@ -1,4 +1,5 @@
 import { useStorage } from '@vueuse/core';
+import { $fetch } from 'ohmyfetch';
 import { defineStore } from 'pinia';
 
 
@@ -10,17 +11,31 @@ export enum UserRole {
 
 export const useUserStore = defineStore('user', () => {
   const user = useStorage<string>('user', null);
+  const jwt = useStorage<string>('jwt', null);
 
   const login = async (username: string, password?: string) => {
-    if (username != 'arzt' && username != 'pflege' && username != 'admin') {
+    try {
+      const response = await $fetch('/api/auth', {
+        method: 'POST',
+        body: {
+          username,
+          password
+        }
+      });
+
+      user.value = username;
+      jwt.value = response.jwt;
+      return true;
+    } catch (e) {
+      console.log(e);
       return false;
     }
-    user.value = username;
-    return true;
+
   }
 
   const logout = async () => {
     user.value = null;
+    jwt.value = null;
   }
 
   const isLoggedIn = () => {
@@ -36,6 +51,7 @@ export const useUserStore = defineStore('user', () => {
     logout,
     isLoggedIn,
     isRole,
-    user
+    user,
+    jwt
   }
 });

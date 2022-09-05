@@ -25,7 +25,7 @@ export const usePatientStore = defineStore('patient', () => {
     return patient;
   };
 
-  const removePatient = async (id: string) => {
+  const removePatient = async (id: number) => {
     await apiFetch(`/api/patients/${id}`, {
       method: 'DELETE'
     });

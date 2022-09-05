@@ -19,6 +19,13 @@
   </q-dialog>
 
   <q-page class="q-pa-md">
+    <q-banner v-if="showHitWarning" class="bg-red text-white my-5 mb-7">
+      <template v-slot:avatar>
+        <q-icon name="warning" color="white" />
+      </template>
+      Thrombozytenabfall erkannt, bitte Risiko für HIT beachten und Indikation prüfen!
+    </q-banner>
+
     <div class="text-xl font-semibold mb-5">{{ patient.name }} ({{ patient.age }} J. / {{ patient.weight }} kg)</div>
 
     <div class="flex gap-5 mb-5">
@@ -131,9 +138,8 @@ import { calculateRateRecommendation, unitToVolume, volumeToUnit } from 'src/lib
 import { apiFetch } from 'src/lib/apiFetch';
 import { useUserStore, UserRole } from 'src/stores/user';
 import LineChart from 'src/components/LineChart.vue';
-import { analyzeMetafile } from 'esbuild';
 import { ChartData, ScatterDataPoint } from 'chart.js';
-import { computed } from '@vue/reactivity';
+
 
 const route = useRoute();
 
@@ -205,10 +211,21 @@ const deleteLabResult = async (labResult: LabResult) => {
   await refreshData();
 };
 
-
+const showHitWarning = ref(false);
 const recommendation = ref(calculateRateRecommendation(0, 0, patient.weight));
 const recalculateRecommendation = () => {
   const latestPTT = labResults.value.find(e => e.ptt != null)?.ptt;
+  const latestTh = labResults.value.find(e => e.thrombocytes != null)?.thrombocytes;
+  const labResultsCopy = [...labResults.value].reverse();
+  const firstTh = labResultsCopy.find(e => e.thrombocytes != null)?.thrombocytes;
+
+
+  if (firstTh && latestTh && latestTh < firstTh * 0.5) {
+    showHitWarning.value = true;
+  } else {
+    showHitWarning.value = false;
+  }
+
   const latestRate = rates.value[0]?.rate;
 
   if (latestPTT && latestRate) {

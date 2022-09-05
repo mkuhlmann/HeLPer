@@ -4,6 +4,7 @@ import fastifyAutoload from '@fastify/autoload';
 
 import path from 'path';
 
+
 const app = fastify({
 });
 
